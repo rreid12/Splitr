@@ -1,0 +1,3 @@
+graft splitr/templates
+graft splitr/static
+include splitr/schema.sql

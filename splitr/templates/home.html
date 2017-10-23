@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
+    <form action="{{ url_for('add_device') }}" method=post class=add-device>
+      <dl>
+        <dt>Device Name:
+        <dd><input type=text size=30 name='device_name'>
+        <dt>Device Cost Per Hour:
+        <dd><input name='device_cost_per_hr' size=30></textarea>
+        <dd><input type=submit value=Share>
+      </dl>
+    </form>
+    <form action="{{ url_for('delete_all_devices') }}" method=post class=delete-all-devices>
+    <dd><input type=submit value=Reset>
+  {% endif %}
+  <ul class=devices>
+  {% for device in devices %}
+    <li><h2>{{ device.device_name }}</h2>{{ device.device_cost_per_hr|safe }}
+  {% else %}
+    <li><em>No devices here so far.</em>
+  {% endfor %}
+  </ul>
+{% endblock %}

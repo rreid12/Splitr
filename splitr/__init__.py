@@ -1,0 +1,1 @@
+from .splitr import app
