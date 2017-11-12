@@ -1,6 +1,7 @@
 import os 
 import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
+from flask_login import LoginManager
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -12,6 +13,10 @@ app.config.update(dict(
 	PASSWORD='default'
 ))
 app.config.from_envvar('SPLITR_SETTINGS', silent=True)
+
+'''TODO'''
+#login_manager = LoginManager()
+#login_manager.init_app(app)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -35,21 +40,24 @@ def logout():
 
 @app.route('/')
 def show_home():
-	db = get_db()
-	cur = db.execute('select device_id, device_name, device_cost_per_hr from device order by device_id asc')
-	devices = cur.fetchall()
-	return render_template('home.html', devices=devices)
+	if session.get('logged_in'):
+		db = get_db()
+		cur = db.execute('select bill_id, bill_amount from bill order by bill_id asc')
+		devices = cur.fetchall()
+		return render_template('home.html', devices=devices)
+	else:
+		return redirect(url_for('login'))
 
 @app.route('/add', methods=['POST'])
 def add_device():
+	error = None
 	if not session.get('logged_in'):
 		abort(401)
-	db = get_db()
-	db.execute('insert into device (device_name, device_cost_per_hr) values (?, ?)',
-		[request.form['device_name'], request.form['device_cost_per_hr']])
-	db.commit()
-	flash('New device sucessfully added')
-	return redirect(url_for('show_home'))
+	roommates = int(request.form['contributors'])
+	bill_amount = request.form['bill_amount']
+	result = split_bill(bill_amount, roommates)
+	flash('Here is how you can split your bill:')
+	return render_template('add.html', error=error, roommates=roommates, result=result)
 
 def connect_db():
 	"""Connects to the specific database"""
@@ -89,3 +97,14 @@ def delete_all_devices():
 	db.commit()
 	flash('Devices cleared')
 	return redirect(url_for('show_home'))
+
+def split_bill(bill_amount, contributors):
+	bill_amount = float(bill_amount[1:])
+	contributors = float(contributors)
+	result = bill_amount / contributors
+	print(result)
+	db = get_db()
+	db.execute('insert into bill (bill_amount, contributors, cost_per_contributor) values (?, ?, ?)',
+		[bill_amount, contributors, result])
+	db.commit()
+	return result

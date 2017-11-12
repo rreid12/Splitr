@@ -1,5 +1,6 @@
-CREATE TABLE `device` (
-	`device_id`	INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-	`device_name`	TEXT,
-	`device_cost_per_hr`	TEXT
+CREATE TABLE `bill` (
+	`bill_id`	INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+	'bill_amount' 	TEXT,
+	`contributors`	TEXT,
+	'cost_per_contributor'	TEXT
 );

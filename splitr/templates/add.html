@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block body %}
+	{% if session.logged_in %}
+   	  <ul class=bills>
+   	  	{% for r in range(1,roommates+1) %}
+   	  		<li><h2>Roommate: #{{ r }} </h2>${{ result }}
+   	  	{% else %}
+   	  		<li><em>No way to split this bill</em>
+   	  	{% endfor %}
+   	  </ul>
+  	{% endif %}
+{% endblock %}

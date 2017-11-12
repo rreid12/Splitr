@@ -1,23 +1,19 @@
 {% extends "layout.html" %}
 {% block body %}
   {% if session.logged_in %}
-    <form action="{{ url_for('add_device') }}" method=post class=add-device>
+  <br>
+    <form action="{{ url_for('add_device') }}" method=post class=add-bill>
       <dl>
-        <dt>Device Name:
-        <dd><input type=text size=30 name='device_name'>
-        <dt>Device Cost Per Hour:
-        <dd><input name='device_cost_per_hr' size=30></textarea>
-        <dd><input type=submit value=Share>
+        <dt><label for="cost">Bill Amount</label>
+          <span class="currency">e.g. ($23.35)</span>
+          <dd><input id="amount" type="text" maxlength="15" name='bill_amount'>
+        <dt><label for="contributor">Roommates:</label>
+          <span class="contributors"></span>
+          <dd><input length="5" name='contributors'>
+          <dd><input type=submit value=Split>
       </dl>
     </form>
     <form action="{{ url_for('delete_all_devices') }}" method=post class=delete-all-devices>
     <dd><input type=submit value=Reset>
   {% endif %}
-  <ul class=devices>
-  {% for device in devices %}
-    <li><h2>{{ device.device_name }}</h2>{{ device.device_cost_per_hr|safe }}
-  {% else %}
-    <li><em>No devices here so far.</em>
-  {% endfor %}
-  </ul>
 {% endblock %}
