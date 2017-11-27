@@ -3,10 +3,11 @@
 	{% if session.logged_in %}
    	  <ul class=bills>
    	  	{% for r in range(1,roommates+1) %}
-   	  		<li><h2>Roommate: #{{ r }} </h2>${{ result }}
+   	  		<li><h2>Roommate: #{{ r }} </h2>{{"$%.2f"|format(result)}}
    	  	{% else %}
    	  		<li><em>No way to split this bill</em>
    	  	{% endfor %}
+   	  	<li><h2>Bill Total: {{"$%.2f"|format(bill_amount)}}
    	  </ul>
   	{% endif %}
 {% endblock %}
