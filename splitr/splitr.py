@@ -54,10 +54,10 @@ def add_device():
 	if not session.get('logged_in'):
 		abort(401)
 	roommates = int(request.form['contributors'])
-	bill_amount = request.form['bill_amount']
+	bill_amount = float(request.form['bill_amount'])
 	result = split_bill(bill_amount, roommates)
 	flash('Here is how you can split your bill:')
-	return render_template('add.html', error=error, roommates=roommates, result=result)
+	return render_template('add.html', error=error, roommates=roommates, result=result, bill_amount=bill_amount)
 
 def connect_db():
 	"""Connects to the specific database"""
@@ -99,7 +99,6 @@ def delete_all_devices():
 	return redirect(url_for('show_home'))
 
 def split_bill(bill_amount, contributors):
-	bill_amount = float(bill_amount[1:])
 	contributors = float(contributors)
 	result = bill_amount / contributors
 	print(result)
