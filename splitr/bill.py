@@ -1,25 +1,41 @@
-import math
+import os, math
+from random import randint
 from contributor import Contributor
 
 class Bill(object):
+
 	def __init__(self, total=0.0):
 		self.total = total
-		self.contributors = []
-		self.contributions = []
+		self.contributions = {}
 
-	def add_contributor(self, roommate):
-		self.contributors.append(roommate)
+	def __repr__(self):
+		return "Bill total: {total}".format(total=self.total)
 
-	def split(self):
-		even_split = True
+	def add_contributor(self, contributor):
+		self.contributions[contributor] = None
+		contributor.add_bill(self)
 
-		percentage = 1.0 / len(self.contributors)
-		contribution = percentage * self.total
+	def even_split(self):
+		ways_split = len(self.contributions)
+		percentage_contribution = 1.0 / ways_split
+		payment_per_contributor = percentage_contribution * self.total
+		payment_per_contributor = self.currency_round_down(payment_per_contributor, 2)
+		contributors = self.contributions.keys()
 
-		if self.digits_after_decimal(contribution) > 2:
-			print('Extra penny: {extra}'.format(extra=self.currency_round_up(contribution, 2)))
+		for con in contributors:
+			self.contributions[con] = payment_per_contributor
 
-		print('The rest will pay: {regular}'.format(regular=self.currency_round_down(contribution, 2)))
+		incomplete_total = payment_per_contributor * ways_split
+		extra_pennies = int(round((self.total - incomplete_total) / 0.01))
+		print(extra_pennies)
+		random_number = randint(0, len(contributors)-1)
+
+		for x in range(extra_pennies):
+			print(random_number)
+			self.contributions[contributors[random_number]] += 0.01
+			del contributors[random_number]
+			random_number = randint(0, len(contributors)-1)
+
 
 	def currency_round_up(self, num, places):
 		return math.ceil(num * 10**places) / 10**places
@@ -36,11 +52,16 @@ class Bill(object):
 
 
 #Testing
-cons = [Contributor(), Contributor()]
-bill = Bill(34.33)
+num = 7
+bill = Bill(341.37)
+
+for x in range(num):
+	cont = Contributor()
+	bill.add_contributor(cont)
+
+bill.even_split();
 
 
-for con in cons:
-	bill.add_contributor(con)
 
-bill.split()
+for key in bill.contributions:
+	print('{contributor} has to pay the following bills: {bills}. They are responsible for the following: {amount}'.format(contributor=key, bills=key.bills, amount=bill.contributions[key]))
